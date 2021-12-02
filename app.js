@@ -182,12 +182,12 @@ app.post('/showPartRank', (req, res) => {
     });
 });
 
-/*
-app.post('/showMyRank', (req, res) => {
-    console.log('post /showAllRank');
 
-    let myRankRes = "show rank,";
-    const tableArray = ['Total', 'N_Back', 'DWMT', 'Guess_Number'];
+app.post('/showMyRank', (req, res) => {
+    console.log('post /showMyRank');
+
+    let myRankRes = "show my rank,";
+    const fieldArray = ['Total', 'N_Back', 'DWMT', 'Guess_Number'];
     let myRankSql = "select nickname, N_Back, ranking from (select *, rank() over (order by N_Back desc) as ranking from score) ranked where nickname = ?;";
     
     let inputData;
@@ -195,33 +195,42 @@ app.post('/showMyRank', (req, res) => {
         inputData = JSON.parse(data);
     });
     req.on('end', () => {
-        for (var i in tableArray){
-            myRankSql = "select * from (select *, rank() over (order by "+tableArray[i]+" desc) as ranking from score) ranked where nickname = ?;";
-            connection.query(myRankSql, (error, result, fileds) => {
-                if (error) throw error;
-                
+        let cnt = 0;
+        for (var i in fieldArray){
+            myRankSql = "select * from (select *, rank() over (order by "+fieldArray[i]+" desc) as ranking from score) ranked where nickname = ?;";
+            console.log(myRankSql);
+            connection.query(myRankSql, [inputData.nickname],(error, result, fileds) => {
+                if (error) {
+                    res.write("error,");
+                    throw error;
+                }
+
+                cnt++;
                 console.log(result);
-                for(let i=0; i<result.length; i++){
-                    myRankRes += result[i].ranking +",";
-                    myRankRes += result[i].nickname +",";
-                    myRankRes += result[i].N_Back +",";
-                    myRankRes += result[i].DWMT +",";
-                    myRankRes += result[i].Guess_Number +",";
-                    myRankRes += result[i].Total +",";
+                
+                if (cnt == 1) {
+                    myRankRes += result[0].nickname +",";
+                    myRankRes += result[0].N_Back +",";
+                    myRankRes += result[0].DWMT +",";
+                    myRankRes += result[0].Guess_Number +",";
+                    myRankRes += result[0].Total +",";
+                    myRankRes += result[0].ranking +",";
+                }
+                else
+                    myRankRes += result[0].ranking +",";
+                
+                console.log(cnt);
+                if (cnt == 4){
+                    console.log(myRankRes);
+                    res.write(myRankRes);
+                    res.end();
                 }
             });
-            console.log(myRankSql);
         }
-        if (result[0] != undefined)
-            res.write(myRankRes);
-        else
-            res.write("error,");
-        res.end();
-
     });
 
 });
-*/
+
 
 app.post('/setScore', (req, res) => {
     console.log('post /join');
