@@ -182,7 +182,6 @@ app.post('/showPartRank', (req, res) => {
     });
 });
 
-
 app.post('/showMyRank', (req, res) => {
     console.log('post /showMyRank');
 
@@ -231,7 +230,6 @@ app.post('/showMyRank', (req, res) => {
 
 });
 
-
 app.post('/setScore', (req, res) => {
     console.log('post /join');
     let inputData;
@@ -252,7 +250,6 @@ app.post('/setScore', (req, res) => {
         });
     });
 });
-
 
 app.listen(app.get('port'), () => {
     console.log(app.get('port'), '번 포트에서 대기 중');
